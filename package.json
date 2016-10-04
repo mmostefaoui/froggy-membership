@@ -1,5 +1,5 @@
 {
-  "name": "froggy-membership",
+  "name": "membership",
   "version": "1.0.0",
   "description": "module to manage membership users",
   "main": "index.js",
