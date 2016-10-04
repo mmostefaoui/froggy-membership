@@ -1,15 +1,13 @@
 var assert = require('assert');
+var mongoose = require('mongoose');
+var Schema   = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
 
-var Log = function (args) {
-    assert(args.subject && args.entry && args.userId, 'need subject, entry and userId');
+var logSchema = mongoose.Schema({
+    subject: String,
+    entry: String,
+    createdAt: {type: Date, default: Date.now},
+    userId: {type: ObjectId, ref: 'User'},
+});
 
-    var log = {};
-    log.subject = args.subject;
-    log.entry = args.entry;
-    log.createdAt = new Date();
-    log.userId = args.userId;
-
-    return log;
-};
-
-module.exports = Log;
+module.exports = mongoose.model("Log", logSchema);
