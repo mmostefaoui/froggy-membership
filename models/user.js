@@ -1,22 +1,33 @@
-var assert       = require('assert');
+var mongoose     = require('mongoose');
+var Schema       = mongoose.Schema;
 var randomstring = require("randomstring");
+var bcrypt       = require('bcrypt-nodejs');
 
-var User = function (args) {
-    assert.ok(args.email, 'Email is required');
-    var user = {};
+var userSchema = new Schema({
+    email: {type: String, required: true},
+    password: {type: String, required: true},
+    createdAt: {type: Date, default: Date.now()},
+    status: {type: String, default: 'pending'},
+    signInCount: {type: Number, default: 0},
+    lastLoginAt: {type: Date, default: Date.now()},
+    currentLoginAt: {type: Date, default: Date.now()},
+    currentSessionToken: {type: String, default: null},
+    reminderToken: {type: String, default: null},
+    reminderSentAt: {type: String, default: null},
+    authenticationToken: {type: String, default: randomstring.generate(18)}
+});
 
-    user.email               = args.email;
-    user.createdAt           = args.createdAt || new Date();
-    user.status              = args.status || 'pending';
-    user.signInCount         = args.signInCount || 0;
-    user.lastLoginAt         = args.lastLoginAt || new Date();
-    user.currentLoginAt      = args.currentLoginAt || new Date();
-    user.currentSessionToken = args.currentSessionToken || null;
-    user.reminderToken       = args.reminderToken || null;
-    user.reminderSentAt      = args.reminderSentAt || null;
-    user.authenticationToken = args.authenticationToken || randomstring.generate({length: 18});
-
-    return user;
+userSchema.methods.generateAuthToken = function (length) {
+    return randomstring.generate(length);
 };
 
-module.exports = User;
+userSchema.methods.generateHash = function (password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+
+userSchema.methods.validPassword = function (password) {
+    return bcrypt.compareSync(password, this.password);
+};
+
+module.exports = mongoose.model("User", userSchema);
