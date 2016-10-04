@@ -21,7 +21,7 @@ describe('Registration', function () {
         });
 
         before(function (done) {
-            reg = new Registration();
+            reg = new Registration(config.mongoURI.test);
             reg.applyForMembership(
                 {
                     email: 'jdoe@test5.com',

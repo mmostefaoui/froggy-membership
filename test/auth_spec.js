@@ -7,7 +7,6 @@ var clearDB        = require('mocha-mongoose')(config.mongoURI.test);
 var should         = require('should');
 
 describe('Authentication', function () {
-    var regResult = {};
     var reg       = {};
     var auth      = {};
     before(function (done) {
@@ -21,7 +20,7 @@ describe('Authentication', function () {
     describe('a valid login', function () {
         var authResult = {};
         before(function (done) {
-            reg = new Registration();
+            reg = new Registration(config.mongoURI.test);
             reg.applyForMembership(
                 {
                     email: 'test@test.com',
@@ -31,7 +30,7 @@ describe('Authentication', function () {
                     assert.ok(regResult.success);
 
                     //log them in
-                    auth = new Authentication();
+                    auth = new Authentication(config.mongoURI.test);
                     auth.authenticate({email: 'test@test.com', password: 'password'}, function (err, result) {
                         assert.ok(err === null, err);
                         authResult = result;
@@ -60,7 +59,7 @@ describe('Authentication', function () {
     describe('empty email', function () {
         var authResult = {};
         before(function (done) {
-            auth = new Authentication();
+            auth = new Authentication(config.mongoURI.test);
             auth.authenticate({email: '', password: 'password'}, function (err, result) {
                 assert.ok(err === null, err);
                 authResult = result;
@@ -79,7 +78,7 @@ describe('Authentication', function () {
     describe('empty password', function () {
         var authResult = {};
         before(function (done) {
-            auth = new Authentication();
+            auth = new Authentication(config.mongoURI.test);
             auth.authenticate({email: 'test@test.com', password: null}, function (err, result) {
                 assert.ok(err === null, err);
                 authResult = result;
@@ -97,7 +96,7 @@ describe('Authentication', function () {
     describe('passwords does not match', function () {
         var authResult = {};
         before(function (done) {
-            auth = new Authentication();
+            auth = new Authentication(config.mongoURI.test);
             auth.authenticate({email: 'xxxxtest@test.com', password: 'wrongpassword'}, function (err, result) {
                 assert.ok(err === null, err);
                 authResult = result;
